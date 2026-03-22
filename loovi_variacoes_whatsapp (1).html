@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loovi — Variações WhatsApp</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --loovi-purple: #5B4FE8;
+  --loovi-violet: #7B68EE;
+  --loovi-green: #00C896;
+  --bg1: #0d0b1a;
+  --bg2: #120f2a;
+  --bg3: #160d35;
+  --glass: rgba(255,255,255,0.06);
+  --glass-border: rgba(255,255,255,0.10);
+  --glass-hover: rgba(255,255,255,0.10);
+  --text: #f0ede8;
+  --muted: rgba(240,237,232,0.5);
+  --hint: rgba(240,237,232,0.25);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Plus Jakarta Sans',sans-serif;
+  background: var(--bg1);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* Orbs */
+.orb{position:fixed;border-radius:50%;filter:blur(100px);opacity:0.18;pointer-events:none;z-index:0;animation:drift 14s ease-in-out infinite}
+.orb1{width:600px;height:600px;background:#5B4FE8;top:-200px;left:-200px;animation-delay:0s}
+.orb2{width:400px;height:400px;background:#4A90E2;bottom:-100px;right:-100px;animation-delay:-5s}
+.orb3{width:300px;height:300px;background:#00C896;top:40%;right:10%;animation-delay:-10s}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(20px,-30px) scale(1.04)}66%{transform:translate(-20px,20px) scale(0.96)}}
+
+/* Layout */
+.header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(13,11,26,0.75);
+  backdrop-filter:blur(24px) saturate(160%);
+  -webkit-backdrop-filter:blur(24px) saturate(160%);
+  border-bottom:1px solid var(--glass-border);
+  padding:0 24px;
+}
+.header-inner{
+  max-width:860px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 0;gap:16px;flex-wrap:wrap;
+}
+.header-logo{display:flex;align-items:center;gap:10px}
+.logo-mark{
+  width:32px;height:32px;border-radius:10px;
+  background:linear-gradient(135deg,var(--loovi-purple),var(--loovi-violet));
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;color:#fff;letter-spacing:-0.3px;
+  box-shadow:0 2px 12px rgba(91,79,232,0.4);
+}
+.logo-text{font-size:14px;font-weight:700;color:var(--text);letter-spacing:-0.2px}
+.logo-sub{font-size:11px;color:var(--muted);margin-left:4px}
+
+/* Nav tabs */
+.main-nav{display:flex;gap:2px;overflow-x:auto}
+.main-nav::-webkit-scrollbar{display:none}
+.nav-tab{
+  padding:8px 16px;border-radius:20px;font-size:12px;font-weight:600;
+  color:var(--muted);cursor:pointer;white-space:nowrap;
+  border:1px solid transparent;transition:all .2s;
+  font-family:'Plus Jakarta Sans',sans-serif;background:transparent;
+}
+.nav-tab:hover{color:var(--text);background:var(--glass)}
+.nav-tab.active{
+  background:linear-gradient(135deg,rgba(91,79,232,0.2),rgba(74,144,226,0.2));
+  border-color:rgba(91,79,232,0.3);color:#fff;
+}
+
+.content{max-width:860px;margin:0 auto;padding:28px 24px;position:relative;z-index:1}
+.panel{display:none}.panel.active{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* Alert */
+.alert{
+  background:rgba(186,117,23,0.12);
+  border:1px solid rgba(186,117,23,0.25);
+  border-radius:16px;padding:14px 18px;
+  margin-bottom:24px;font-size:13px;
+  color:#FAC775;line-height:1.6;
+  display:flex;gap:10px;align-items:flex-start;
+}
+.alert-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+
+/* Section label */
+.section-label{
+  font-size:10px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:var(--hint);margin-bottom:14px;
+}
+
+/* Day block */
+.day-block{margin-bottom:40px}
+.day-header{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.day-num{
+  width:40px;height:40px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:monospace;font-size:13px;font-weight:700;flex-shrink:0;
+}
+.d1{background:rgba(0,200,150,0.12);color:var(--loovi-green);border:1px solid rgba(0,200,150,0.2)}
+.d2{background:rgba(91,79,232,0.15);color:#a599ff;border:1px solid rgba(91,79,232,0.25)}
+.d3{background:rgba(186,117,23,0.12);color:#FAC775;border:1px solid rgba(186,117,23,0.2)}
+.d4{background:rgba(224,75,74,0.12);color:#f09595;border:1px solid rgba(224,75,74,0.2)}
+.day-title{font-size:16px;font-weight:700;color:var(--text);letter-spacing:-0.2px}
+.day-goal{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* Var tabs */
+.var-tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.var-tab{
+  padding:5px 13px;border-radius:20px;font-size:11px;font-weight:600;
+  cursor:pointer;border:1px solid var(--glass-border);
+  background:transparent;color:var(--muted);transition:all .15s;
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+.var-tab:hover{border-color:rgba(255,255,255,0.2);color:var(--text)}
+.var-tab.active{
+  border-color:transparent;color:#0d0b1a;
+}
+.var-tab.v1.active{background:#c8f04a}
+.var-tab.v2.active{background:#4af0a0}
+.var-tab.v3.active{background:#f0a04a}
+.var-tab.v4.active{background:#f04a7a}
+.var-tab.v5.active{background:#4ab4f0}
+
+/* Message card */
+.msg-card{
+  background:var(--glass);
+  border:1px solid var(--glass-border);
+  border-radius:20px;padding:20px;
+  display:none;
+  animation:fadeIn .2s ease;
+}
+.msg-card.active{display:block}
+
+/* Tone tag */
+.msg-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.tone-tag{
+  font-size:10px;font-weight:700;padding:3px 10px;
+  border-radius:20px;letter-spacing:.05em;text-transform:uppercase;
+}
+.tone-1{background:rgba(200,240,74,0.12);color:#c8f04a;border:1px solid rgba(200,240,74,0.2)}
+.tone-2{background:rgba(74,240,160,0.12);color:#4af0a0;border:1px solid rgba(74,240,160,0.2)}
+.tone-3{background:rgba(240,160,74,0.12);color:#f0a04a;border:1px solid rgba(240,160,74,0.2)}
+.tone-4{background:rgba(240,74,122,0.12);color:#f04a7a;border:1px solid rgba(240,74,122,0.2)}
+.tone-5{background:rgba(74,180,240,0.12);color:#4ab4f0;border:1px solid rgba(74,180,240,0.2)}
+
+/* WA bubble */
+.wa-bubble{
+  background:rgba(31,44,31,0.6);
+  border:1px solid rgba(46,74,46,0.5);
+  border-radius:0 16px 16px 16px;
+  padding:14px 16px;font-size:13px;
+  line-height:1.7;color:#d4f5d4;
+  white-space:pre-wrap;word-break:break-word;
+  margin-bottom:6px;position:relative;
+}
+.wa-bubble::before{
+  content:'';position:absolute;top:0;left:-7px;
+  border:7px solid transparent;
+  border-top-color:rgba(46,74,46,0.5);border-right:none;
+}
+.wa-time{font-size:10px;color:rgba(106,154,106,0.7);text-align:right;margin-bottom:14px}
+
+/* Tip box */
+.why-box{
+  background:rgba(91,79,232,0.08);
+  border:1px solid rgba(91,79,232,0.15);
+  border-radius:12px;padding:10px 14px;
+  font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px;
+}
+.why-box strong{color:#a599ff;font-weight:600}
+.anti-box{
+  background:rgba(74,144,226,0.08);
+  border:1px solid rgba(74,144,226,0.15);
+  border-radius:12px;padding:10px 14px;
+  font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px;
+}
+.anti-box strong{color:#4ab4f0;font-weight:600}
+
+/* Copy btn */
+.copy-btn{
+  width:100%;padding:10px;
+  border:1px solid var(--glass-border);
+  border-radius:12px;background:transparent;
+  color:var(--muted);font-size:12px;font-weight:600;
+  cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;
+  transition:all .15s;display:flex;align-items:center;
+  justify-content:center;gap:6px;
+}
+.copy-btn:hover{
+  background:rgba(91,79,232,0.15);
+  border-color:rgba(91,79,232,0.3);color:#a599ff;
+}
+.copy-btn.ok{
+  background:rgba(0,200,150,0.12);
+  border-color:rgba(0,200,150,0.3);color:var(--loovi-green);
+}
+
+/* Divider */
+.day-divider{height:1px;background:var(--glass-border);margin:32px 0}
+
+/* Horarios */
+.h-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:20px}
+.h-card{
+  background:var(--glass);border:1px solid var(--glass-border);
+  border-radius:16px;padding:16px;transition:all .2s;
+}
+.h-card:hover{background:var(--glass-hover);border-color:rgba(255,255,255,0.15)}
+.h-card.best{
+  background:rgba(91,79,232,0.12);
+  border-color:rgba(91,79,232,0.3);
+}
+.h-time{font-family:monospace;font-size:15px;font-weight:700;color:var(--text)}
+.h-label{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.h-desc{font-size:12px;color:var(--hint);margin-top:6px;line-height:1.5}
+.best-badge{
+  display:inline-block;background:var(--loovi-purple);color:#fff;
+  font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;
+  margin-top:8px;letter-spacing:.04em;text-transform:uppercase;
+}
+
+/* Timeline */
+.tl-wrap{display:flex;flex-direction:column;gap:4px}
+.tl-row{
+  display:flex;align-items:center;gap:12px;
+  padding:8px 14px;border-radius:10px;transition:background .15s;
+}
+.tl-row:hover{background:var(--glass)}
+.tl-time{font-family:monospace;font-size:11px;font-weight:600;color:#a599ff;min-width:80px}
+.tl-bar-wrap{flex:1;height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden}
+.tl-bar{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--loovi-purple),var(--loovi-violet))}
+.tl-desc{font-size:11px;color:var(--muted);min-width:130px;text-align:right}
+
+/* Insight */
+.insight-block{
+  background:var(--glass);border:1px solid var(--glass-border);
+  border-radius:20px;padding:20px;margin-bottom:14px;
+}
+.insight-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.insight-row{
+  display:flex;gap:10px;align-items:flex-start;
+  padding:8px 0;border-bottom:1px solid var(--glass-border);
+}
+.insight-row:last-child{border-bottom:none;padding-bottom:0}
+.insight-dot{width:5px;height:5px;border-radius:50%;background:var(--loovi-purple);flex-shrink:0;margin-top:7px}
+.insight-text{font-size:12px;color:var(--muted);line-height:1.6}
+.insight-text strong{color:var(--text);font-weight:600}
+
+/* Footer */
+footer{
+  text-align:center;padding:24px;
+  font-size:11px;color:var(--hint);
+  border-top:1px solid var(--glass-border);
+  margin-top:32px;position:relative;z-index:1;
+}
+
+/* Back link */
+.back-link{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:12px;color:var(--muted);text-decoration:none;
+  padding:6px 12px;border-radius:20px;border:1px solid var(--glass-border);
+  transition:all .2s;margin-bottom:20px;
+}
+.back-link:hover{color:var(--text);background:var(--glass)}
+
+@media(max-width:600px){
+  .content{padding:20px 16px}
+  .header-inner{padding:12px 0}
+}
+</style>
+</head>
+<body>
+
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-logo">
+      <div class="logo-mark">AR</div>
+      <span class="logo-text">Loovi</span>
+      <span class="logo-sub">· Variações WhatsApp</span>
+    </div>
+    <div class="main-nav">
+      <button class="nav-tab active" onclick="go('j1')">Jornada A</button>
+      <button class="nav-tab" onclick="go('j2')">Jornada B</button>
+      <button class="nav-tab" onclick="go('horarios')">Horários</button>
+      <button class="nav-tab" onclick="go('insights')">Estratégia</button>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+  <a class="back-link" href="index.html">← Voltar</a>
+
+  <!-- JORNADA A -->
+  <div id="j1" class="panel active">
+    <div class="alert">
+      <span class="alert-icon">⚡</span>
+      <span><strong>Regra anti-bloqueio:</strong> Use uma variação diferente para cada cliente. Nunca repita a mesma mensagem para dois contatos no mesmo dia. Alterne entre os tons para parecer conversa natural, não automação.</span>
+    </div>
+    <div class="section-label">Jornada A — Cliente entrou no anúncio e não responde</div>
+
+    <!-- DIA 1 -->
+    <div class="day-block">
+      <div class="day-header">
+        <div class="day-num d1">D1</div>
+        <div><div class="day-title">Primeiro contato — Curiosidade</div><div class="day-goal">Objetivo: abrir conversa sem pressão, só uma pergunta</div></div>
+      </div>
+      <div class="var-tabs">
+        <button class="var-tab v1 active" onclick="sv(this,'d1a')">V1 · Direto</button>
+        <button class="var-tab v2" onclick="sv(this,'d1b')">V2 · Caloroso</button>
+        <button class="var-tab v3" onclick="sv(this,'d1c')">V3 · Casual</button>
+        <button class="var-tab v4" onclick="sv(this,'d1d')">V4 · Curioso</button>
+        <button class="var-tab v5" onclick="sv(this,'d1e')">V5 · Leve</button>
+      </div>
+      <div id="d1a" class="msg-card active">
+        <div class="msg-meta"><span class="tone-tag tone-1">Tom direto</span><button class="copy-btn" onclick="cp(this,'d1a-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="d1a-t">Olá, [Nome]! 👋 Tudo bem por aí?
+
+Me conta — seu veículo já está assegurado?</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Pergunta simples e aberta. Não vende nada, só cria abertura para o cliente responder.</div>
+      </div>
+      <div id="d1b" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-2">Tom caloroso</span><button class="copy-btn" onclick="cp(this,'d1b-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="d1b-t">Oi, [Nome]! Tudo bem com você? 😊
+
+Passando rapidinho pra te fazer uma pergunta: seu carro tem seguro hoje?</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> "Rapidinho" diminui percepção de pressão. Tom amigável aumenta chance de resposta.</div>
+      </div>
+      <div id="d1c" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-3">Tom casual</span><button class="copy-btn" onclick="cp(this,'d1c-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="d1c-t">E aí, [Nome]! Como tá? 🙌
+
+Só queria saber: você já tem seguro pro seu veículo ou ainda tá sem?</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Linguagem descolada parece mensagem de amigo. Rompe barreira do "vendedor".</div>
+      </div>
+      <div id="d1d" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-4">Tom curioso</span><button class="copy-btn" onclick="cp(this,'d1d-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="d1d-t">Olá, [Nome]! Tudo certo? ✨
+
+Você deixa seu carro na rua hoje? Só queria entender sua situação atual com relação ao seguro 🚗</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Pergunta contextual faz o cliente pensar na vulnerabilidade real antes de responder.</div>
+      </div>
+      <div id="d1e" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-5">Tom leve</span><button class="copy-btn" onclick="cp(this,'d1e-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="d1e-t">Oi, [Nome]! 😄
+
+Uma perguntinha rápida: seu veículo está protegido com seguro hoje?</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Ultra concisa. Alta taxa de leitura por não exigir esforço do cliente.</div>
+      </div>
+    </div>
+    <div class="day-divider"></div>
+
+    <!-- DIA 2 -->
+    <div class="day-block">
+      <div class="day-header">
+        <div class="day-num d2">D2</div>
+        <div><div class="day-title">Urgência + solução rápida</div><div class="day-goal">Objetivo: plantar medo do imprevisto e mostrar facilidade da solução</div></div>
+      </div>
+      <div class="var-tabs">
+        <button class="var-tab v1 active" onclick="sv(this,'d2a')">V1 · Alerta</button>
+        <button class="var-tab v2" onclick="sv(this,'d2b')">V2 · Estatística</button>
+        <button class="var-tab v3" onclick="sv(this,'d2c')">V3 · Cenário</button>
+        <button class="var-tab v4" onclick="sv(this,'d2d')">V4 · Emocional</button>
+        <button class="var-tab v5" onclick="sv(this,'d2e')">V5 · Benefício</button>
+      </div>
+      <div id="d2a" class="msg-card active">
+        <div class="msg-meta"><span class="tone-tag tone-1">Tom alerta</span><button class="copy-btn" onclick="cp(this,'d2a-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="d2a-t">Olá, [Nome]! 🚨 Seu veículo está exposto a roubos, acidentes e prejuízos todos os dias.
+
+Na LOOVI você faz a cotação em minutos e garante tranquilidade, proteção e economia.
+
+Não espere o imprevisto acontecer. Vamos fazer sua cotação agora? ❓</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Gatilho de perda + facilidade da solução + CTA direto.</div>
+      </div>
+      <div id="d2b" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-2">Tom estatística</span><button class="copy-btn" onclick="cp(this,'d2b-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="d2b-t">Oi, [Nome]! Sabia que um carro é roubado no Brasil a cada 20 segundos? 😱
+
+E quem não tem seguro arca com tudo sozinho. Na LOOVI a cotação é rápida, o valor surpreende — e a proteção começa hoje.
+
+Posso te enviar os valores agora? 🚗</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Dado real aumenta percepção de risco e justifica ação imediata.</div>
+      </div>
+      <div id="d2c" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-3">Tom cenário</span><button class="copy-btn" onclick="cp(this,'d2c-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="d2c-t">Olá, [Nome]! Imagina sair de casa e seu carro não estar mais lá... 😔
+
+Ou bater em outro veículo e ter que pagar tudo do próprio bolso.
+
+Na LOOVI você evita esse pesadelo com um seguro que cabe no seu orçamento. Quer ver os valores? 👇</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Storytelling visual. O cliente se imagina na situação e quer evitá-la.</div>
+      </div>
+      <div id="d2d" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-4">Tom emocional</span><button class="copy-btn" onclick="cp(this,'d2d-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="d2d-t">Oi, [Nome]! 💛
+
+Seu carro é um bem que você conquistou com esforço. Não faz sentido deixá-lo exposto sem proteção nenhuma, né?
+
+Aqui na LOOVI a gente cuida do que é seu. Posso fazer uma cotação rápida agora? 🛡️</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Conecta com esforço emocional de ter conquistado o bem. Alta ressonância.</div>
+      </div>
+      <div id="d2e" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-5">Tom benefício</span><button class="copy-btn" onclick="cp(this,'d2e-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="d2e-t">Olá, [Nome]! 👋
+
+Proteção pro seu veículo + parcelas que cabem no bolso + cotação em menos de 5 minutos = Loovi 🚗✅
+
+Vale a pena pelo menos ver os valores, não acha? Me chama que te mando na hora!</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Equação visual de valor. Facilidade + preço + velocidade em uma linha.</div>
+      </div>
+    </div>
+    <div class="day-divider"></div>
+
+    <!-- DIA 3 -->
+    <div class="day-block">
+      <div class="day-header">
+        <div class="day-num d3">D3</div>
+        <div><div class="day-title">Quebra de silêncio</div><div class="day-goal">Objetivo: forçar posicionamento — fazer o cliente revelar o motivo do silêncio</div></div>
+      </div>
+      <div class="var-tabs">
+        <button class="var-tab v1 active" onclick="sv(this,'d3a')">V1 · Direto</button>
+        <button class="var-tab v2" onclick="sv(this,'d3b')">V2 · Oportunidade</button>
+        <button class="var-tab v3" onclick="sv(this,'d3c')">V3 · Simpatia</button>
+        <button class="var-tab v4" onclick="sv(this,'d3d')">V4 · Honestidade</button>
+        <button class="var-tab v5" onclick="sv(this,'d3e')">V5 · Escolha</button>
+      </div>
+      <div id="d3a" class="msg-card active">
+        <div class="msg-meta"><span class="tone-tag tone-1">Tom direto</span><button class="copy-btn" onclick="cp(this,'d3a-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="d3a-t">Oi, [Nome]! 😊
+
+Estou com uma mega oportunidade para você assegurar seu veículo, mas não estou conseguindo retorno.
+
+Desistiu de fazer a cotação? ❓</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Pergunta direta que provoca. A maioria responde só para não parecer desinteressada.</div>
+      </div>
+      <div id="d3b" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-2">Tom oportunidade</span><button class="copy-btn" onclick="cp(this,'d3b-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="d3b-t">Olá, [Nome]! Tenho uma condição especial que posso reservar pra você, mas preciso do seu retorno hoje 🕐
+
+Consegue me dar um minutinho? Só preciso de um "sim" pra seguir! 🙏</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Urgência + exclusividade + facilidade ("só um sim"). Barra de entrada baixíssima.</div>
+      </div>
+      <div id="d3c" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-3">Tom simpatia</span><button class="copy-btn" onclick="cp(this,'d3c-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="d3c-t">Oi, [Nome]! Sei que a rotina é corrida 😅
+
+Mas não quero que você fique sem proteção pro seu carro por falta de tempo. A cotação aqui é rapidíssima.
+
+Posso te chamar num horário melhor? Qual seria ideal pra você? ⏰</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Remove a objeção "não tive tempo". Coloca o cliente no controle do horário.</div>
+      </div>
+      <div id="d3d" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-4">Tom honestidade</span><button class="copy-btn" onclick="cp(this,'d3d-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="d3d-t">Olá, [Nome]! Sendo bem honesto com você: tentei te contatar e não consegui retorno 😕
+
+Se o seguro não fizer sentido agora, tudo bem! Só me fala pra eu não te incomodar mais 🙏
+
+Mas se ainda tiver interesse, é só responder "quero" que continuo de onde paramos!</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Transparência gera confiança. "Me fala pra não incomodar" paradoxalmente gera resposta.</div>
+      </div>
+      <div id="d3e" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-5">Tom escolha</span><button class="copy-btn" onclick="cp(this,'d3e-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="d3e-t">Oi, [Nome]! Rápida pergunta — me responde só um número 👇
+
+1️⃣ Ainda tenho interesse no seguro
+2️⃣ Deixa pra outro momento
+
+Sem pressão! Só quero entender se avanço ou encerro por aqui 😊</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Escolha binária remove o esforço de digitar. A maioria responde "1" por não querer perder.</div>
+      </div>
+    </div>
+    <div class="day-divider"></div>
+
+    <!-- DIA 4 -->
+    <div class="day-block">
+      <div class="day-header">
+        <div class="day-num d4">D4</div>
+        <div><div class="day-title">Encerramento com porta aberta</div><div class="day-goal">Objetivo: criar escassez e deixar isca irresistível para retorno futuro</div></div>
+      </div>
+      <div class="var-tabs">
+        <button class="var-tab v1 active" onclick="sv(this,'d4a')">V1 · Clássico</button>
+        <button class="var-tab v2" onclick="sv(this,'d4b')">V2 · Respeitoso</button>
+        <button class="var-tab v3" onclick="sv(this,'d4c')">V3 · Provocador</button>
+        <button class="var-tab v4" onclick="sv(this,'d4d')">V4 · Emocional</button>
+        <button class="var-tab v5" onclick="sv(this,'d4e')">V5 · Mínimo</button>
+      </div>
+      <div id="d4a" class="msg-card active">
+        <div class="msg-meta"><span class="tone-tag tone-1">Tom clássico</span><button class="copy-btn" onclick="cp(this,'d4a-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="d4a-t">Olá! Como não tive retorno e já tentei inúmeras vezes, vou encerrar seu atendimento para não tomar seu tempo nem o meu, ok?
+
+Mas se decidir proteger seu carro, me chama que te envio a cotação e faço algo diferenciado pra você 😉</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> "Algo diferenciado" cria curiosidade sem especificar. Ambiguidade intencional.</div>
+      </div>
+      <div id="d4b" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-2">Tom respeitoso</span><button class="copy-btn" onclick="cp(this,'d4b-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="d4b-t">Oi, [Nome]! Respeito muito o seu tempo ⏱️
+
+Como não consegui contato, estou encerrando seu atendimento por aqui. Fico feliz em ter tentado te ajudar!
+
+Se um dia quiser proteger seu veículo, é só me chamar. Tenho condições que você não vai encontrar em outro lugar 🛡️</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> "Condições que não vai encontrar em outro lugar" planta dúvida no concorrente.</div>
+      </div>
+      <div id="d4c" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-3">Tom provocador</span><button class="copy-btn" onclick="cp(this,'d4c-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="d4c-t">Olá, [Nome]! Última mensagem, prometo 😅
+
+Vou encerrar seu atendimento. Mas antes: se um dia for fechar seguro em outro lugar, me chama antes. Tenho certeza que consigo algo melhor pra você.
+
+Cuida do seu carro! 🚗💚</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> "Última mensagem, prometo" gera alívio e faz o cliente ler até o fim.</div>
+      </div>
+      <div id="d4d" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-4">Tom emocional</span><button class="copy-btn" onclick="cp(this,'d4d-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="d4d-t">Oi, [Nome]! Tentei te ajudar, mas entendo que o momento pode não ser agora 💛
+
+Encerrando por aqui com carinho. Fico à disposição quando quiser.
+
+P.S.: Não feche seguro com ninguém sem falar comigo antes — garanto que você vai se surpreender 😉</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> P.S. é o elemento mais lido em encerramentos. Isca no final é golpe certeiro.</div>
+      </div>
+      <div id="d4e" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-5">Tom mínimo</span><button class="copy-btn" onclick="cp(this,'d4e-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="d4e-t">Olá, [Nome]. Encerrando atendimento por falta de retorno 🙏
+
+Se mudar de ideia — estou aqui. E garanto condições especiais pra você.</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Brevidade extrema. Funciona bem para clientes que deram "visto" mas nunca responderam.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JORNADA B -->
+  <div id="j2" class="panel">
+    <div class="alert">
+      <span class="alert-icon">⚡</span>
+      <span><strong>Dica jornada B:</strong> Alterne 1 mensagem + 1 vídeo por dia. Na mensagem do dia 2, sempre use algo que o cliente te contou — isso aumenta muito a taxa de resposta.</span>
+    </div>
+    <div class="section-label">Jornada B — Cotação enviada, cliente sumiu</div>
+
+    <!-- DIA 1 B -->
+    <div class="day-block">
+      <div class="day-header">
+        <div class="day-num d1">D1</div>
+        <div><div class="day-title">Verificar se visualizou a cotação</div><div class="day-goal">Objetivo: engajamento suave com técnica "ou-ou"</div></div>
+      </div>
+      <div class="var-tabs">
+        <button class="var-tab v1 active" onclick="sv(this,'e1a')">V1 · Clássico</button>
+        <button class="var-tab v2" onclick="sv(this,'e1b')">V2 · Decisão</button>
+        <button class="var-tab v3" onclick="sv(this,'e1c')">V3 · Curioso</button>
+        <button class="var-tab v4" onclick="sv(this,'e1d')">V4 · Facilitador</button>
+        <button class="var-tab v5" onclick="sv(this,'e1e')">V5 · Direto</button>
+      </div>
+      <div id="e1a" class="msg-card active">
+        <div class="msg-meta"><span class="tone-tag tone-1">Tom clássico</span><button class="copy-btn" onclick="cp(this,'e1a-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="e1a-t">Oi! Tudo bem? 😊
+
+Te enviei a cotação para analisar... Você chegou a ver qual plano faz mais sentido para você:
+
+BÁSICO ou COMPLETO? ⁉️</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Pergunta "ou-ou" pressupõe a escolha entre planos, não entre comprar ou não.</div>
+      </div>
+      <div id="e1b" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-2">Tom decisão</span><button class="copy-btn" onclick="cp(this,'e1b-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="e1b-t">Oi, [Nome]! A cotação que te mandei ainda tá lá 😊
+
+Me conta: você se identifica mais com proteção básica ou quer o pacote completo com mais coberturas?
+
+Só me fala e já explico as diferenças! 🚗</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Convida o cliente a se identificar com um perfil. Engajamento maior que "você viu?".</div>
+      </div>
+      <div id="e1c" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-3">Tom curioso</span><button class="copy-btn" onclick="cp(this,'e1c-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="e1c-t">Ei, [Nome]! Mandei sua cotação — ficou bem bacana 👀
+
+Qual foi a primeira coisa que chamou sua atenção quando você viu os valores?</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Pressupõe que o cliente JÁ viu. Faz ele querer confirmar ou ir olhar agora.</div>
+      </div>
+      <div id="e1d" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-4">Tom facilitador</span><button class="copy-btn" onclick="cp(this,'e1d-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="e1d-t">Oi, [Nome]! Nos dias corridos né? 😄
+
+Se tiver dúvida sobre coberturas, parcelas, o que inclui — pode me perguntar! Estou aqui pra facilitar sua decisão 🙌
+
+Qual plano chamou mais sua atenção?</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Empatia com correria + se posiciona como facilitador, não vendedor.</div>
+      </div>
+      <div id="e1e" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-5">Tom direto</span><button class="copy-btn" onclick="cp(this,'e1e-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="e1e-t">Oi, [Nome]! Cotação enviada ✅
+
+Me fala só um número:
+1️⃣ Gostei, quero avançar
+2️⃣ Ainda não vi, me manda de novo
+3️⃣ Preciso de mais tempo
+
+Pode ser só o número mesmo! 😊</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Três opções claras. Remove totalmente o esforço de resposta. Taxa de engajamento altíssima.</div>
+      </div>
+    </div>
+    <div class="day-divider"></div>
+
+    <!-- DIA 2 B -->
+    <div class="day-block">
+      <div class="day-header">
+        <div class="day-num d2">D2</div>
+        <div><div class="day-title">Lembrar da vulnerabilidade com dado do cliente</div><div class="day-goal">Objetivo: usar o que o cliente disse para criar urgência pessoal</div></div>
+      </div>
+      <div class="var-tabs">
+        <button class="var-tab v1 active" onclick="sv(this,'e2a')">V1 · Clássico</button>
+        <button class="var-tab v2" onclick="sv(this,'e2b')">V2 · Preocupação</button>
+        <button class="var-tab v3" onclick="sv(this,'e2c')">V3 · Risco real</button>
+        <button class="var-tab v4" onclick="sv(this,'e2d')">V4 · Parceiro</button>
+        <button class="var-tab v5" onclick="sv(this,'e2e')">V5 · Custo</button>
+      </div>
+      <div id="e2a" class="msg-card active">
+        <div class="msg-meta"><span class="tone-tag tone-1">Tom clássico</span><button class="copy-btn" onclick="cp(this,'e2a-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="e2a-t">Oieee! Passando rapidinho porque não consegui seu retorno.
+
+Você comentou que no momento está sem seguro, e como imprevistos acontecem quando a gente menos espera, quero saber se conseguiu olhar a cotação ❓</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> "Você comentou que..." usa a própria fala do cliente como espelho. Muito poderoso.</div>
+      </div>
+      <div id="e2b" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-2">Tom preocupação</span><button class="copy-btn" onclick="cp(this,'e2b-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="e2b-t">Oi, [Nome]! Estou passando com uma preocupação sincera 🙏
+
+Você me falou que está sem seguro — isso significa que qualquer batidinha, qualquer furto, sai do seu bolso. Todo dia.
+
+A cotação ainda está aberta. Dá só uma olhada? 😊</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> "Preocupação sincera" cria conexão real. "Todo dia" reforça o risco contínuo.</div>
+      </div>
+      <div id="e2c" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-3">Tom risco real</span><button class="copy-btn" onclick="cp(this,'e2c-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="e2c-t">Olá, [Nome]! Me conta: você viaja de carro? Usa pra trabalhar?
+
+Pergunto porque você me falou que está sem seguro — e quanto mais a gente usa o carro, maior o risco.
+
+Sua cotação está aqui, esperando. Vale a pena dar uma olhada agora 👇</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Pergunta contextual faz o cliente pensar na exposição REAL do veículo.</div>
+      </div>
+      <div id="e2d" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-4">Tom parceiro</span><button class="copy-btn" onclick="cp(this,'e2d-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="e2d-t">Oi, [Nome]! 💛 Passando como parceiro mesmo!
+
+Você me contou que o carro está sem seguro. Isso me preocupa de verdade porque imprevistos não avisam.
+
+Estou aqui pra garantir que você encontre o melhor custo-benefício. Conseguiu ver a cotação? 🚗</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> "Como parceiro" reposiciona a relação — aliado, não vendedor.</div>
+      </div>
+      <div id="e2e" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-5">Tom custo</span><button class="copy-btn" onclick="cp(this,'e2e-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="e2e-t">Oi, [Nome]! Sabia que uma batida simples pode custar entre R$ 3.000 e R$ 15.000? 😮
+
+E você me falou que está sem seguro. O valor mensal da proteção é bem menor do que isso.
+
+Olha a cotação que te enviei — faz sentido ver os números! 👇</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Âncora numérica. O custo do seguro parece pequeno comparado ao custo do imprevisto.</div>
+      </div>
+    </div>
+    <div class="day-divider"></div>
+
+    <!-- DIA 3 B -->
+    <div class="day-block">
+      <div class="day-header">
+        <div class="day-num d3">D3</div>
+        <div><div class="day-title">Dar saída honrosa — forçar posicionamento</div><div class="day-goal">Objetivo: eliminar o limbo, forçar um "sim" ou "não" sem agredir</div></div>
+      </div>
+      <div class="var-tabs">
+        <button class="var-tab v1 active" onclick="sv(this,'e3a')">V1 · Clássico</button>
+        <button class="var-tab v2" onclick="sv(this,'e3b')">V2 · Empatia</button>
+        <button class="var-tab v3" onclick="sv(this,'e3c')">V3 · Emoji</button>
+        <button class="var-tab v4" onclick="sv(this,'e3d')">V4 · Objeção</button>
+        <button class="var-tab v5" onclick="sv(this,'e3e')">V5 · Compromisso</button>
+      </div>
+      <div id="e3a" class="msg-card active">
+        <div class="msg-meta"><span class="tone-tag tone-1">Tom clássico</span><button class="copy-btn" onclick="cp(this,'e3a-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="e3a-t">Oi, [Nome]! Tudo bem? 😊
+
+Como não tive retorno, queria entender para não te incomodar.
+
+Hoje faz mais sentido para você:
+1️⃣ Seguir com o seguro e proteger seu carro
+2️⃣ Deixar para outro momento
+
+Me fala só o número 👍</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Escolha binária + "só o número" = fricção zero para responder.</div>
+      </div>
+      <div id="e3b" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-2">Tom empatia</span><button class="copy-btn" onclick="cp(this,'e3b-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="e3b-t">Oi, [Nome]! Sem julgamento nenhum aqui, tá? 😊
+
+Às vezes o momento não é o ideal, e tudo bem! Só quero entender se vale continuar tentando contato ou se prefere deixar pra outro momento.
+
+Um "sim" ou "não" já me ajuda muito 🙏</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> "Sem julgamento" derruba defensiva. Muitos clientes estavam apenas com vergonha.</div>
+      </div>
+      <div id="e3c" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-3">Tom emoji</span><button class="copy-btn" onclick="cp(this,'e3c-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="e3c-t">Oi, [Nome]! Pergunta sincera — me responde só um emoji 👇
+
+✅ Sim, quero seguir
+⏳ Preciso de mais tempo
+❌ Não quero mais por agora</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Resposta por emoji tem taxa de resposta altíssima. Remove o esforço de digitar.</div>
+      </div>
+      <div id="e3d" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-4">Tom objeção</span><button class="copy-btn" onclick="cp(this,'e3d-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="e3d-t">Olá, [Nome]! Só pra entender melhor e não te incomodar...
+
+O que impediu de avançar com a cotação? Foi o valor? A cobertura? Ou simplesmente não é o momento agora?
+
+Me conta — assim consigo te ajudar melhor! 😊</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Levanta objeção específica. Quem responde, abre porta para negociação.</div>
+      </div>
+      <div id="e3e" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-5">Tom compromisso</span><button class="copy-btn" onclick="cp(this,'e3e-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="e3e-t">Oi, [Nome]! Última tentativa antes de encerrar 🙏
+
+Se não for o momento, pode me dizer quando seria melhor para eu retornar? Semana que vem? Mês que vem?
+
+Fico feliz em respeitar seu tempo! 😊</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Pede data futura — quem der, vira lead quente para follow-up posterior.</div>
+      </div>
+    </div>
+    <div class="day-divider"></div>
+
+    <!-- DIA 4 B -->
+    <div class="day-block">
+      <div class="day-header">
+        <div class="day-num d4">D4</div>
+        <div><div class="day-title">Encerramento com isca final</div><div class="day-goal">Objetivo: fechar o ciclo e plantar dúvida sobre o concorrente</div></div>
+      </div>
+      <div class="var-tabs">
+        <button class="var-tab v1 active" onclick="sv(this,'e4a')">V1 · Clássico</button>
+        <button class="var-tab v2" onclick="sv(this,'e4b')">V2 · Concorrente</button>
+        <button class="var-tab v3" onclick="sv(this,'e4c')">V3 · Carinho</button>
+        <button class="var-tab v4" onclick="sv(this,'e4d')">V4 · P.S. final</button>
+        <button class="var-tab v5" onclick="sv(this,'e4e')">V5 · Mínimo</button>
+      </div>
+      <div id="e4a" class="msg-card active">
+        <div class="msg-meta"><span class="tone-tag tone-1">Tom clássico</span><button class="copy-btn" onclick="cp(this,'e4a-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="e4a-t">Olá! Estou tentando contato sem sucesso — você me pediu uma cotação, enviei, e não consigo interação. Por este motivo estou encerrando seu atendimento, ok?
+
+Qualquer mudança estou à disposição...
+
+Não feche seu seguro sem antes me consultar — aqui você tem condições diferenciadas 🙏</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> A última frase planta dúvida em qualquer proposta concorrente que o cliente receber.</div>
+      </div>
+      <div id="e4b" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-2">Tom concorrente</span><button class="copy-btn" onclick="cp(this,'e4b-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="e4b-t">Oi, [Nome]! Encerrando seu atendimento por aqui 🙏
+
+Uma coisa importante: se você receber proposta de outro lugar, me manda antes de fechar. Tenho certeza que consigo cobrir ou superar o valor com cobertura melhor.
+
+Cuida-se! 💛</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Convida o cliente a usar você como segunda opinião. Muitos voltam por isso.</div>
+      </div>
+      <div id="e4c" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-3">Tom carinho</span><button class="copy-btn" onclick="cp(this,'e4c-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="e4c-t">Olá, [Nome]! Foi uma satisfação tentar te ajudar 😊
+
+Estou encerrando o atendimento, mas guarda meu contato! Quando sentir que é o momento certo, estarei aqui com a melhor opção pra você.
+
+Que seu carro te leve a lugares incríveis! 🚗✨</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Encerramento memorável e positivo. Cliente lembra de você com afeto.</div>
+      </div>
+      <div id="e4d" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-4">Tom P.S. final</span><button class="copy-btn" onclick="cp(this,'e4d-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="e4d-t">Oi, [Nome]! Como não tive retorno, encerro por aqui. Espero ter te ajudado de alguma forma 🙏
+
+Fico disponível quando precisar!
+
+P.S.: Caso decida fechar com outra corretora, me chama antes. Não vai se arrepender 😉</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> P.S. é o elemento mais lido. Reservar a isca para ele garante que seja vista.</div>
+      </div>
+      <div id="e4e" class="msg-card">
+        <div class="msg-meta"><span class="tone-tag tone-5">Tom mínimo</span><button class="copy-btn" onclick="cp(this,'e4e-t')">📋 Copiar</button></div>
+        <div class="wa-bubble" id="e4e-t">Olá, [Nome]. Encerrando 🙏
+
+Se precisar de seguro no futuro — me lembre antes de fechar em qualquer lugar. Tenho condições especiais para você.</div>
+        <div class="wa-time">✓✓ Anderson · Loovi</div>
+        <div class="why-box"><strong>Por que funciona:</strong> Brevidade extrema. Não parece automação. Funciona bem para quem nunca respondeu.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HORÁRIOS -->
+  <div id="horarios" class="panel">
+    <div class="section-label">Melhores janelas · WhatsApp</div>
+    <div class="h-grid">
+      <div class="h-card">
+        <div class="h-time">08h30 – 10h30</div>
+        <div class="h-label">Manhã</div>
+        <div class="h-desc">Início do dia organizado. Ainda fora do pico de trabalho. Boa abertura.</div>
+      </div>
+      <div class="h-card">
+        <div class="h-time">12h00 – 13h30</div>
+        <div class="h-label">Almoço</div>
+        <div class="h-desc">Celular na mão enquanto almoça. Ótimo para retomar cotações enviadas.</div>
+      </div>
+      <div class="h-card best">
+        <div class="h-time">17h30 – 19h00</div>
+        <div class="h-label">Final de tarde</div>
+        <div class="h-desc">Saindo do trabalho. Mais relaxado para analisar proposta.</div>
+        <div class="best-badge">⭐ Melhor horário</div>
+      </div>
+      <div class="h-card best">
+        <div class="h-time">19h30 – 21h00</div>
+        <div class="h-label">Noite</div>
+        <div class="h-desc">Ideal para fechamento. A pessoa tem tempo para decidir com calma.</div>
+        <div class="best-badge">⭐ Fechar aqui</div>
+      </div>
+    </div>
+    <div class="section-label" style="margin-top:24px">Distribuição de engajamento</div>
+    <div class="insight-block">
+      <div class="tl-wrap">
+        <div class="tl-row"><span class="tl-time">08h – 10h</span><div class="tl-bar-wrap"><div class="tl-bar" style="width:45%"></div></div><span class="tl-desc">Boa abertura</span></div>
+        <div class="tl-row"><span class="tl-time">10h – 12h</span><div class="tl-bar-wrap"><div class="tl-bar" style="width:60%"></div></div><span class="tl-desc">Bom engajamento</span></div>
+        <div class="tl-row"><span class="tl-time">12h – 14h</span><div class="tl-bar-wrap"><div class="tl-bar" style="width:65%"></div></div><span class="tl-desc">Almoço · bom</span></div>
+        <div class="tl-row"><span class="tl-time">14h – 17h</span><div class="tl-bar-wrap"><div class="tl-bar" style="width:50%"></div></div><span class="tl-desc">Pico de trabalho</span></div>
+        <div class="tl-row"><span class="tl-time">17h – 19h</span><div class="tl-bar-wrap"><div class="tl-bar" style="width:90%"></div></div><span class="tl-desc">⭐ Pico de abertura</span></div>
+        <div class="tl-row"><span class="tl-time">19h – 21h</span><div class="tl-bar-wrap"><div class="tl-bar" style="width:85%"></div></div><span class="tl-desc">⭐ Melhor para fechar</span></div>
+        <div class="tl-row"><span class="tl-time">21h+</span><div class="tl-bar-wrap"><div class="tl-bar" style="width:15%"></div></div><span class="tl-desc">Evitar</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INSIGHTS -->
+  <div id="insights" class="panel">
+    <div class="section-label">O que faz uma executiva vender 30+ contratos/mês</div>
+    <div class="insight-block">
+      <div class="insight-title">🎯 Os 7 segredos da jornada</div>
+      <div class="insight-row"><div class="insight-dot"></div><div class="insight-text"><strong>Jornada sistematizada:</strong> Nunca depende de improviso. Cada dia tem uma mensagem com objetivo específico.</div></div>
+      <div class="insight-row"><div class="insight-dot"></div><div class="insight-text"><strong>Gatilho de perda antes de ganho:</strong> Fala de risco (roubo, acidente) antes de falar de preço ou vantagem.</div></div>
+      <div class="insight-row"><div class="insight-dot"></div><div class="insight-text"><strong>Usa o que o cliente disse:</strong> Na Jornada B dia 2, cita "você me disse que está sem seguro" — cria espelho e responsabiliza o cliente.</div></div>
+      <div class="insight-row"><div class="insight-dot"></div><div class="insight-text"><strong>Técnica "ou-ou":</strong> Nunca pergunta "vai querer?". Pergunta "Básico ou Completo?" — já pressupõe a compra.</div></div>
+      <div class="insight-row"><div class="insight-dot"></div><div class="insight-text"><strong>Encerramento provoca reação:</strong> "Vou encerrar seu atendimento" ativa o medo de perder a oportunidade.</div></div>
+      <div class="insight-row"><div class="insight-dot"></div><div class="insight-text"><strong>"Algo diferenciado":</strong> Nunca especifica o que é — a ambiguidade mantém o desejo aceso mesmo após o encerramento.</div></div>
+      <div class="insight-row"><div class="insight-dot"></div><div class="insight-text"><strong>Timing estratégico:</strong> Mensagens nos horários certos aumentam drasticamente a taxa de abertura e resposta.</div></div>
+    </div>
+  </div>
+</div>
+
+<footer>Anderson Roberto · Loovi Seguros · Playbook Geral · 40 variações anti-bloqueio</footer>
+
+<script>
+function go(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach((t,i)=>{
+    t.classList.toggle('active',['j1','j2','horarios','insights'][i]===id);
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function sv(btn,id){
+  const block=btn.closest('.day-block');
+  block.querySelectorAll('.var-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  block.querySelectorAll('.msg-card').forEach(c=>c.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function cp(btn,id){
+  navigator.clipboard.writeText(document.getElementById(id).innerText).then(()=>{
+    btn.classList.add('ok');btn.textContent='✅ Copiado!';
+    setTimeout(()=>{btn.classList.remove('ok');btn.textContent='📋 Copiar';},2200);
+  });
+}
+</script>
+</body>
+</html>
